@@ -37,18 +37,38 @@ resource "aws_route_table" "private-crt" {
     Name = "private-crt"
   }
 }
+
+# Database routes
+resource "aws_route_table" "database-crt" {
+  vpc_id = aws_vpc.VPC.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.private-nat-gateway.id
+  }
+
+  tags = {
+    Name = "database-crt"
+  }
+}
+
 resource "aws_route_table_association" "crta-private-subnet" {
   subnet_id      = aws_subnet.private.id
   route_table_id = aws_route_table.private-crt.id
 }
 
-# NAT Gateway to allow private subnet to connect out the way
-resource "aws_eip" "nat_gateway" {
+resource "aws_route_table_association" "crta-database-subnet" {
+  subnet_id      = aws_subnet.database.id
+  route_table_id = aws_route_table.database-crt.id
+}
+
+# NAT Gateway
+resource "aws_eip" "nat_gateway_public" {
   vpc = true
 }
 
 resource "aws_nat_gateway" "public-nat-gateway" {
-  allocation_id = aws_eip.nat_gateway.id
+  allocation_id = aws_eip.nat_gateway_public.id
   subnet_id     = aws_subnet.public.id
 
   tags = {
@@ -58,48 +78,17 @@ resource "aws_nat_gateway" "public-nat-gateway" {
   depends_on = [aws_internet_gateway.igw]
 }
 
-# Security Group
-resource "aws_security_group" "SG-Bastion" {
-  vpc_id = aws_vpc.VPC.id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = -1
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = ["84.54.78.36/32", "185.230.204.108/32"]
-  }
-
-  tags = {
-    Name = "SG-Bastion"
-  }
+resource "aws_eip" "nat_gateway_private" {
+  vpc = true
 }
 
-# Security Group
-resource "aws_security_group" "SG-Private" {
-  vpc_id = aws_vpc.VPC.id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = -1
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = [aws_vpc.VPC.cidr_block]
-  }
+resource "aws_nat_gateway" "private-nat-gateway" {
+  allocation_id = aws_eip.nat_gateway_private.id
+  subnet_id     = aws_subnet.private.id
 
   tags = {
-    Name = "SG-Private"
+    Name = "Nat Gateway in private subnet"
   }
+
+  depends_on = [aws_internet_gateway.igw]
 }

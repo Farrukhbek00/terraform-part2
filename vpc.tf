@@ -26,3 +26,12 @@ resource "aws_subnet" "private" {
     Name = "private"
   }
 }
+
+resource "aws_subnet" "database" {
+  vpc_id            = aws_vpc.VPC.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "eu-west-1a"
+  tags = {
+    Name = "database"
+  }
+}

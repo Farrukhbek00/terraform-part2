@@ -1,26 +1,52 @@
 resource "aws_instance" "Bastion" {
-    ami = "${lookup(var.AMI, var.AWS_REGION)}"
+    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
     instance_type = "t2.micro"
 
-    subnet_id = "${aws_subnet.public.id}"
+    subnet_id              = "${aws_subnet.public.id}"
     vpc_security_group_ids = ["${aws_security_group.SG-Bastion.id}"]
-    key_name = "${aws_key_pair.key_pair.id}"
+    key_name               = "${aws_key_pair.key_pair.id}"
 
     tags = {
         Name: "Bastion"
     }
 }
 
-resource "aws_instance" "Private-ec2" {
-    ami = "${lookup(var.AMI, var.AWS_REGION)}"
+resource "aws_instance" "Public-ec2" {
+    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
     instance_type = "t2.micro"
 
-    subnet_id = "${aws_subnet.private.id}"
+    subnet_id              = "${aws_subnet.public.id}"
+    vpc_security_group_ids = ["${aws_security_group.SG-Public.id}"]
+    key_name               = "${aws_key_pair.key_pair.id}"
+
+    tags = {
+        Name: "Public-ec2"
+    }
+}
+
+resource "aws_instance" "Private-ec2" {
+    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
+    instance_type = "t2.micro"
+
+    subnet_id              = "${aws_subnet.private.id}"
     vpc_security_group_ids = ["${aws_security_group.SG-Private.id}"]
-    key_name = "${aws_key_pair.key_pair.id}"
+    key_name               = "${aws_key_pair.key_pair.id}"
 
     tags = {
         Name: "Private-ec2"
+    }
+}
+
+resource "aws_instance" "Database" {
+    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
+    instance_type = "t2.micro"
+
+    subnet_id              = "${aws_subnet.database.id}"
+    vpc_security_group_ids = ["${aws_security_group.SG-Database.id}"]
+    key_name               = "${aws_key_pair.key_pair.id}"
+
+    tags = {
+        Name: "Database"
     }
 }
 
