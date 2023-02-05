@@ -1,7 +1,7 @@
-variable "AWS_REGION" {
+variable "region" {
   default = "eu-west-1"
 }
-variable "AMI" {
+variable "ami" {
   type = map(string)
 
   default = {

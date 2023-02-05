@@ -1,5 +1,5 @@
 resource "aws_security_group" "SG-Bastion" {
-  vpc_id = aws_vpc.VPC.id
+  vpc_id = var.vpc.id
 
   egress {
     from_port   = 0
@@ -21,7 +21,7 @@ resource "aws_security_group" "SG-Bastion" {
 }
 
 resource "aws_security_group" "SG-Public" {
-  vpc_id = aws_vpc.VPC.id
+  vpc_id = var.vpc.id
 
   egress {
     from_port   = 0
@@ -50,7 +50,7 @@ resource "aws_security_group" "SG-Public" {
 }
 
 resource "aws_security_group" "SG-Private" {
-  vpc_id = aws_vpc.VPC.id
+  vpc_id = var.vpc.id
 
   egress {
     from_port   = 0
@@ -63,7 +63,7 @@ resource "aws_security_group" "SG-Private" {
     from_port = 22
     to_port   = 22
     protocol  = "tcp"
-    cidr_blocks = [aws_vpc.VPC.cidr_block]
+    cidr_blocks = [var.vpc.cidr_block]
   }
 
   tags = {
@@ -72,7 +72,7 @@ resource "aws_security_group" "SG-Private" {
 }
 
 resource "aws_security_group" "SG-Database" {
-  vpc_id = aws_vpc.VPC.id
+  vpc_id = var.vpc.id
 
   egress {
     from_port   = 0
@@ -85,7 +85,7 @@ resource "aws_security_group" "SG-Database" {
     from_port = 22
     to_port   = 22
     protocol  = "tcp"
-    cidr_blocks = [aws_subnet.private.cidr_block]
+    cidr_blocks = [var.subnet_private.cidr_block]
   }
 
   tags = {

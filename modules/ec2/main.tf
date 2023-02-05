@@ -1,9 +1,9 @@
 resource "aws_instance" "Bastion" {
-    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
+    ami           = "${lookup(var.ami, var.region)}"
     instance_type = "t2.micro"
 
-    subnet_id              = "${aws_subnet.public.id}"
-    vpc_security_group_ids = ["${aws_security_group.SG-Bastion.id}"]
+    subnet_id              = "${var.subnet_public_id}"
+    vpc_security_group_ids = ["${var.sg_bastion_id}"]
     key_name               = "${aws_key_pair.key_pair.id}"
 
     tags = {
@@ -12,11 +12,11 @@ resource "aws_instance" "Bastion" {
 }
 
 resource "aws_instance" "Public-ec2" {
-    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
+    ami           = "${lookup(var.ami, var.region)}"
     instance_type = "t2.micro"
 
-    subnet_id              = "${aws_subnet.public.id}"
-    vpc_security_group_ids = ["${aws_security_group.SG-Public.id}"]
+    subnet_id              = "${var.subnet_public_id}"
+    vpc_security_group_ids = ["${var.sg_public_id}"]
     key_name               = "${aws_key_pair.key_pair.id}"
 
     tags = {
@@ -25,11 +25,11 @@ resource "aws_instance" "Public-ec2" {
 }
 
 resource "aws_instance" "Private-ec2" {
-    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
+    ami           = "${lookup(var.ami, var.region)}"
     instance_type = "t2.micro"
 
-    subnet_id              = "${aws_subnet.private.id}"
-    vpc_security_group_ids = ["${aws_security_group.SG-Private.id}"]
+    subnet_id              = "${var.subnet_private_id}"
+    vpc_security_group_ids = ["${var.sg_private_id}"]
     key_name               = "${aws_key_pair.key_pair.id}"
 
     tags = {
@@ -38,11 +38,11 @@ resource "aws_instance" "Private-ec2" {
 }
 
 resource "aws_instance" "Database" {
-    ami           = "${lookup(var.AMI, var.AWS_REGION)}"
+    ami           = "${lookup(var.ami, var.region)}"
     instance_type = "t2.micro"
 
-    subnet_id              = "${aws_subnet.database.id}"
-    vpc_security_group_ids = ["${aws_security_group.SG-Database.id}"]
+    subnet_id              = "${var.subnet_database_id}"
+    vpc_security_group_ids = ["${var.sg_database_id}"]
     key_name               = "${aws_key_pair.key_pair.id}"
 
     tags = {
