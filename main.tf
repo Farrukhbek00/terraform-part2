@@ -1,3 +1,14 @@
+terraform {
+  backend "s3" {
+    bucket         = "farruh-tfstate-part2"
+    key            = "dev/part2/terraform.tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "part2locktable"
+  }
+
+  required_version = "= 1.3.7"
+}
+
 module "networking" {
   source = "./modules/networking"
 }
