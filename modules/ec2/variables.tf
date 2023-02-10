@@ -33,3 +33,7 @@ variable "sg_private_id" {
 variable "sg_database_id" {
   type = any
 }
+
+variable "ec2_user" {
+  type = string
+}
